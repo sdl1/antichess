@@ -4,6 +4,7 @@
 import Board
 import Player
 import Rules
+import Move
 
 from optparse import OptionParser
 #import argparse # python 2.7
@@ -64,7 +65,19 @@ if __name__=="__main__":
 
 			madeValidMove = False;
 			while not madeValidMove:
+                                print playerNames[col] + "'s turn"
 				m = players[col].getMove(b)
+                                # If retract, we pop two moves and try again
+                                if m==Move.RETRACT:
+                                    lastMoveByThisPlayer = b.getSecondLastMove()
+                                    if b.retractTurn():
+                                        print playerNames[col], "retracts move", lastMoveByThisPlayer
+                                    else:
+                                        print "Unable to retract."
+			            print ""
+                                    b.displayAsText()
+			            print ""
+                                    continue
 				try:
 					r.validate(m, b, col)
 					madeValidMove = True

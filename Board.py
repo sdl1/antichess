@@ -66,10 +66,11 @@ class Board:
 		# Allow null moves (passes)
 		if move==Move.PASS:
 			return
-		# Allow retracting move
-		if move==Move.RETRACT:
-			self.retractMove()
-			return
+                # Retractions and resignations should not be made here
+                if move==Move.RETRACT or move==Move.RESIGN:
+                        print "Move error."
+                        exit()
+
 		fr, to = move.unpack()
 		self.movesMade.append( [move, self.pieces[to]] )
 
@@ -88,10 +89,23 @@ class Board:
 		if isinstance(move, Move.PromotionMove):
 			self.pieces[ fr ] = Pieces.Pawn( self.pieces[fr].colour )
 
+        def retractTurn(self):
+                # Try to pop two moves, to get back to the same player
+                if len(self.movesMade)<2:
+                    return False
+                self.retractMove()
+                self.retractMove()
+                return True
+
 	def getLastMove(self):
 		if len(self.movesMade)==0:
 			return Move.NONE
 		return self.movesMade[-1][0]
+
+	def getSecondLastMove(self):
+                if len(self.movesMade)<2:
+			return Move.NONE
+		return self.movesMade[-2][0]
 	
 	def getLastMovedPiece(self):
 		if len(self.movesMade)==0:
