@@ -129,16 +129,26 @@ class AIPlayer(Player):
 		#return [ 8*fr[0] + fr[1], 8*to[0]+to[1] ]
 		return bestMove
 
-	def heuristic(self, board, colour):
+	def heuristic(self, board, colour, validMoves, isCapture):
 		# Prefer fewer pieces
 		n_me = board.getNumPieces(colour)
 		n_him = board.getNumPieces(1-colour)
+                material_score = n_him - n_me
+
+                # Prefer either no captures or lots of capture choices
+                num_captures = sum(isCapture)
+                if num_captures==0:
+                    freedom_score = 3
+                elif num_captures==1:
+                    freedom_score = -3
+                else:
+                    freedom_score = 0
 
 		if n_me==0:
 			return +self.INFINITY
 		if n_him==0:
 			return -self.INFINITY
-		return n_him - n_me
+		return material_score + freedom_score
 
 	def minimax(self, board, depth, colour):
 		validMoves, isCapture = self.rules.getAllValidMoves(board, colour)
@@ -161,7 +171,7 @@ class AIPlayer(Player):
 		#	#sys.stdout.flush()
 		#	depth += 1
 		if len(validMoves)==0 or depth <= 0:
-			return self.heuristic(board, colour)
+			return self.heuristic(board, colour, validMoves, isCapture)
 		for move in validMoves:
 			#print " "*(self.maxDepth - depth), move
 #			fr = move[0]
