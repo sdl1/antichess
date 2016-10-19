@@ -5,6 +5,7 @@ import Pieces
 		
 import random
 import sys
+import time
 
 class Player:
 	colour = None
@@ -18,7 +19,7 @@ class Player:
 
 class HumanPlayer(Player):
 	name = "Human"
-	def getMove(self, board):
+	def getMove(self, board, maxTime):
 
 		metacommand = True
 		while metacommand:
@@ -64,7 +65,7 @@ class HumanPlayer(Player):
 
 class PassingPlayer(Player):
 	name = "Passing"
-	def getMove(self, board):
+	def getMove(self, board, maxTime):
 		return Move.PASS
 
 class RandomPlayer(Player):
@@ -73,7 +74,7 @@ class RandomPlayer(Player):
 		Player.__init__(self, col, rules)
 		random.seed()
 
-	def getMove(self, board):
+	def getMove(self, board, maxTime):
 		validMoves, isCapture = self.rules.getAllValidMoves(board, self.colour)
 		if len(validMoves)==0:
 			return Move.PASS
@@ -89,45 +90,71 @@ class AIPlayer(Player):
 		Player.__init__(self, col, rules)
 		self.maxDepth = maxDepth
 		random.seed()
-
-	def getMove(self, board):
+        
+        def getMove(self, board, maxTime):
+                startTime = time.time()
+                # Be conservative with time
+                # TODO enforce this exactly
+                maxTime = maxTime * 0.95
 		validMoves, isCapture = self.rules.getAllValidMoves(board, self.colour)
 		random.shuffle(validMoves)
 		#NOTE: isCapture is now out of order
 		if len(validMoves)==0:
 			return Move.PASS
+		if len(validMoves)==1:
+			return validMoves[0]
 
+		overallBestScore, overallBestMove = -self.INFINITY, validMoves[0]
+
+                for depth in range(0,self.maxDepth):
+                    print "At depth ", depth
+                    bestScore, bestMove = self.getMoveToDepth(board, maxTime, startTime, validMoves, depth)
+                    # Less than or equals means deeper moves at same score will supersede
+                    if bestScore>=overallBestScore:
+                        overallBestMove = bestMove
+                        overallBestScore = bestScore
+                        print "Changing best move to ", overallBestMove
+                    if time.time()-startTime > maxTime:
+                        break
+                # TODO give more weight to deeper evaluations
+                # TODO overwrite shallow scores with deeper scores - otherwise might make a move which looks good at shallow depth but not at deeper depth
+
+		return overallBestMove
+
+	def getMoveToDepth(self, board, maxTime, startTime, validMoves, depth):
 		bestScore, bestMove = -self.INFINITY, validMoves[0]
 		counter=0
 
-		if len(validMoves)==1:
-			bestMove = validMoves[0]
-		else:
-			for move in validMoves:
-				print move.__str__()+" ",
-				done = counter/float(len(validMoves)) * 100
-				sys.stdout.write( "%d%% " % done )
-				sys.stdout.flush()
-				counter += 1
-				#fr = move[0]
-				#to = move[1]
-				#board.makeMove(  [8*fr[0]+fr[1], 8*to[0]+to[1]]  )
-				board.makeMove( move )
-				#score = -self.minimax(board, self.maxDepth, 1-self.colour) #works
-				score = -self.alphabeta(board, self.maxDepth, -self.INFINITY, self.INFINITY, 1-self.colour)
-				board.retractMove()
-				print "score=%d" % score
-				sys.stdout.flush()
-				if score > bestScore:
-					bestScore, bestMove = score, move
-				if bestScore==self.INFINITY:
-					break
-			print "Best score is",bestScore,"for move",bestMove
+		for move in validMoves:
+			print move.__str__()+" ",
+			done = counter/float(len(validMoves)) * 100
+			sys.stdout.write( "%d%% " % done )
+			sys.stdout.flush()
+			counter += 1
+			#fr = move[0]
+			#to = move[1]
+			#board.makeMove(  [8*fr[0]+fr[1], 8*to[0]+to[1]]  )
+			board.makeMove( move )
+			#score = -self.minimax(board, self.maxDepth, 1-self.colour) #works
+			score = -self.alphabeta(board, depth, -self.INFINITY, self.INFINITY, 1-self.colour, startTime, maxTime)
+			board.retractMove()
+                        # Check time - if overtime, ignore this move
+                        elapsedTime = time.time() - startTime
+                        if elapsedTime>maxTime:
+                            print "Ran out of time."
+                            break
+			print "score=%d" % score
+			sys.stdout.flush()
+			if score > bestScore:
+				bestScore, bestMove = score, move
+			if bestScore==self.INFINITY:
+				break
+		print "Best score is",bestScore,"for move",bestMove
 
 		#fr = bestMove[0]
 		#to = bestMove[1]
 		#return [ 8*fr[0] + fr[1], 8*to[0]+to[1] ]
-		return bestMove
+		return bestScore, bestMove
 
 	def heuristic(self, board, colour, validMoves, isCapture):
 		# Prefer fewer pieces
@@ -136,6 +163,7 @@ class AIPlayer(Player):
                 material_score = n_him - n_me
 
                 # Prefer either no captures or lots of capture choices
+                # TODO just prefer more available moves in general?
                 num_captures = sum(isCapture)
                 if num_captures==0:
                     freedom_score = 3
@@ -163,7 +191,7 @@ class AIPlayer(Player):
 			a = max(a, -self.minimax(board, depth-1, 1-colour))
 			board.retractMove()
 
-	def alphabeta(self, board, depth, a, b, colour):
+	def alphabeta(self, board, depth, a, b, colour, startTime, maxTime):
 		validMoves, isCapture = self.rules.getAllValidMoves(board, colour)
 		# if there are fewer than N captures, keep looking...
 		#if 0 < sum(isCapture) < 4:
@@ -178,10 +206,15 @@ class AIPlayer(Player):
 #			to = move[1]
 #			board.makeMove(  [8*fr[0]+fr[1], 8*to[0]+to[1]]  )
 			board.makeMove( move )
-			a = max(a, -self.alphabeta(board, depth-1, -b, -a, 1-colour))
+			a = max(a, -self.alphabeta(board, depth-1, -b, -a, 1-colour, startTime, maxTime))
 			board.retractMove()
 			if b <= a:
 				break	
+                        # Check time
+                        elapsedTime = time.time() - startTime
+                        if elapsedTime>maxTime:
+                            return 0 # Will be ignored
+
 		return a
 
 	

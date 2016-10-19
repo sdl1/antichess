@@ -8,6 +8,7 @@ import Move
 
 from optparse import OptionParser
 #import argparse # python 2.7
+import time
 
 playerNames = ["White", "Black"]
 
@@ -15,16 +16,19 @@ playerNames = ["White", "Black"]
 if __name__=="__main__":
 
 	parser = OptionParser()
-	parser.add_option("-d", "--depth", type="int", dest="AIdepth", default=0,
-	                  help="set initial AI search depth", metavar="DEPTH")
+	parser.add_option("-d", "--depth", type="int", dest="AIdepth", default=99,
+	                  help="set maximum AI search depth", metavar="MAXDEPTH")
 	parser.add_option("-w", "--white", dest="white", default="human",
 	                  help="set white player", metavar="PLAYER")
 	parser.add_option("-b", "--black", dest="black", default="ai",
 	                  help="set black player", metavar="PLAYER")
+	parser.add_option("-t", "--time", type="int", dest="maxTime", default=5,
+	                  help="set maximum AI thinking time", metavar="MAXTIME")
 	(options, args) = parser.parse_args()
 
 	b = Board.Board()
 	AIdepth = options.AIdepth
+        maxTime = options.maxTime
 
 	playertype = [options.white, options.black]
 	players = []
@@ -45,7 +49,7 @@ if __name__=="__main__":
 
 		print "%s is %s." % (playerNames[i], players[i].name),
 		if p=="ai":
-			print "Depth is %s." % AIdepth
+			print "Depth is %s, max thinking time is %ds." % (AIdepth, maxTime)
 		print ""
 
 
@@ -64,9 +68,10 @@ if __name__=="__main__":
 				break
 
 			madeValidMove = False;
+                        startTime = time.time()
 			while not madeValidMove:
                                 print playerNames[col] + "'s turn"
-				m = players[col].getMove(b)
+				m = players[col].getMove(b, maxTime)
                                 # If retract, we pop two moves and try again
                                 if m==Move.RETRACT:
                                     lastMoveByThisPlayer = b.getSecondLastMove()
@@ -84,6 +89,7 @@ if __name__=="__main__":
 				except Rules.RulesViolation as e:
 					madeValidMove = False
 					print "Invalid move: " + e.value
+                        print "Got valid move in ", time.time()-startTime, "s"
 			if m==Rules.Move.RESIGN:
 				print playerNames[col] + " resigns. "
 				WIN = 1-col
