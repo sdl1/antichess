@@ -46,6 +46,18 @@ class Piece:
 class Pawn(Piece):
 	def __init__(self, col):
 		Piece.__init__(self, col, "p", u'\u2659')
+
+        def getPlausibleMoves(self, fr):
+                # Ignoring promotion but including double move
+                row, col = fr[0], fr[1]
+                if self.colour==0:
+                            torow = fr[0]-1
+                            moves = [ [torow, col-1], [torow, col], [torow, col+1], [row-2, col] ]
+                else:
+                            torow = fr[0]+1
+                            moves = [ [torow, col-1], [torow, col], [torow, col+1], [row+2, col] ]
+                return moves
+
 	def canMakeMove(self, board, move):
 		fr, to = move[0], move[1]
 		# White
@@ -100,6 +112,13 @@ class Pawn(Piece):
 class King(Piece):
 	def __init__(self, col):
 		Piece.__init__(self, col, "K", u'\u2654')
+        def getPlausibleMoves(self, fr):
+                moves = []
+                for row in [fr[0]-1, fr[0], fr[0]+1]:
+                        for col in [fr[1]-1, fr[1], fr[1]+1]:
+                                if not (row==fr[0] and col==fr[1]): moves.append([row,col])
+                return moves
+
 	def canMakeMove(self, board, move):
 		fr, to = move[0], move[1]
 		return ( abs(fr[0]-to[0]) <= 1 and abs(fr[1]-to[1]) <= 1 )
@@ -107,6 +126,10 @@ class King(Piece):
 class Queen(Piece):
 	def __init__(self, col):
 		Piece.__init__(self, col, "Q", u'\u2655')
+        def getPlausibleMoves(self, fr):
+                movesRook = Rook(self.colour).getPlausibleMoves(fr)
+                movesBishop = Bishop(self.colour).getPlausibleMoves(fr)
+                return movesRook + movesBishop
 	def canMakeMove(self, board, move):
 		fr, to = move[0], move[1]
 		if (fr[1]==to[1] or fr[0]==to[0]):
@@ -119,6 +142,13 @@ class Queen(Piece):
 class Rook(Piece):
 	def __init__(self, col):
 		Piece.__init__(self, col, "R", u'\u2656')
+        def getPlausibleMoves(self, fr):
+                moves = []
+                for col in range(0,7):
+                    moves.append([fr[0], col])
+                for row in range(0,7):
+                    moves.append([row, col])
+                return moves
 	def canMakeMove(self,board, move):
 		fr, to = move[0], move[1]
 		return (fr[1]==to[1] or fr[0]==to[0])
@@ -126,6 +156,34 @@ class Rook(Piece):
 class Knight(Piece):
 	def __init__(self, col):
 		Piece.__init__(self, col, "N", u'\u2658')
+        def getPlausibleMoves(self, fr):
+                moves = []
+                r,c = fr[0], fr[1]
+                # Left
+                if c>1:
+                    if r>0:
+                        moves.append([r-1,c-2])
+                    if r<7:
+                        moves.append([r+1,c-2])
+                # Right
+                if c<6:
+                    if r>0:
+                        moves.append([r-1,c+2])
+                    if r<7:
+                        moves.append([r+1,c+2])
+                # Up
+                if r>1:
+                    if c>0:
+                        moves.append([r-2,c-1])
+                    if c<7:
+                        moves.append([r-2,c+1])
+                # Down
+                if r<6:
+                    if c>0:
+                        moves.append([r+2,c-1])
+                    if c<7:
+                        moves.append([r+2,c+1])
+                return moves
 	def canMakeMove(self,board, move):
 		fr, to = move[0], move[1]
 		return ( abs(fr[0]-to[0])==2 and abs(fr[1]-to[1])==1 ) or ( abs(fr[1]-to[1])==2 and abs(fr[0]-to[0])==1 )
@@ -133,6 +191,28 @@ class Knight(Piece):
 class Bishop(Piece):
 	def __init__(self, col):
 		Piece.__init__(self, col, "B", u'\u2657')
+        def getPlausibleMoves(self, fr):
+                moves = []
+                r,c = fr[0], fr[1]
+                while r<7 and c<7:
+                    r = r+1
+                    c = c+1
+                    moves.append([r,c])
+                r,c = fr[0], fr[1]
+                while r>=1 and c>=1:
+                    r = r-1
+                    c = c-1
+                    moves.append([r,c])
+                r,c = fr[0], fr[1]
+                while r>=1 and c<7:
+                    r = r-1
+                    c = c+1
+                    moves.append([r,c])
+                while r<7 and c>=1:
+                    r = r+1
+                    c = c-1
+                    moves.append([r,c])
+                return moves
 	def canMakeMove(self,board, move):
 		fr, to = move[0], move[1]
 		return ( abs(fr[0]-to[0]) == abs(fr[1]-to[1]) )

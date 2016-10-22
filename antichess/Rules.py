@@ -24,6 +24,10 @@ class Suicide():
 			return True
 
 		fr, to = move.unpack()
+                # Basic validation - check it's within the board
+                if fr<0 or fr>63 or to<0 or to>63:
+                        raise RulesViolation("Invalid from or to square.")
+
 		# Can't move an empty square or other colour piece
 		if board.pieces[fr] == None:
 			raise RulesViolation("Tried to move empty square")
@@ -53,18 +57,18 @@ class Suicide():
 	def getValidMoves(self, board, piece, colour, enforceCaptures=True):
 		moves = []
 		fr = piece
-		for row in range(0, 8):
-			for col in range(0, 8):
-				to = [row, col]
-				#m = [ 8*fr[0] + fr[1], 8*to[0] + to[1] ]
-				m = Move.Move(fr, to)
-				try:
-					self.validate( m, board, colour, enforceCaptures )
-					#moves.append( [fr, to] )
-					moves.append( m )
-				except RulesViolation as e:
-					pass
-                # Promotion moves
+                # First, we get a (strictly optimistic) list of plausible places this piece could move to,
+                # ignoring line of sight and promotions.
+                # This is faster than checking validity of all possible moves.
+                destList = board.pieces[fr[0]*8+fr[1]].getPlausibleMoves(fr)
+                for to in destList:
+			m = Move.Move(fr, to)
+			try:
+				self.validate( m, board, colour, enforceCaptures )
+				moves.append( m )
+			except RulesViolation as e:
+				pass
+                # Now consider promotion moves
 		promotionPieces = [Pieces.Queen(colour), Pieces.Rook(colour), Pieces.Knight(colour), Pieces.Bishop(colour), Pieces.King(colour)]
                 if isinstance(board.pieces[fr[0]*8+fr[1]], Pieces.Pawn):
                         row = fr[0]
