@@ -12,9 +12,7 @@ import time
 
 playerNames = ["White", "Black"]
 
-
-if __name__=="__main__":
-
+def playGame():
 	parser = OptionParser()
 	parser.add_option("-d", "--depth", type="int", dest="AIdepth", default=99,
 	                  help="set maximum AI search depth", metavar="MAXDEPTH")
