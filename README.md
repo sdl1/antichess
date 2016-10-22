@@ -8,21 +8,22 @@ antichess is a simple terminal implementation of suicide chess - also called ant
 * Captures are obligatory. If one or more captures are available, the capturing player may choose.
 * There is no check, checkmate or castling. Kings are treated as a normal piece which may be captured.
 * A player that is stalemated wins.
+* There is no fity-move rule or threefold repetition rule.
 
 The first player to lose all their pieces wins. If a player cannot move on their turn, they win.
 
-A simple (minimax) AI is implemented, but it is very slow for more than a couple of plies lookahead.
+A simple (alpha-beta) AI is implemented, but it is very slow for more than a couple of plies lookahead.
 
 ## Usage
 
 Start a new game as white against the AI:
 ```shell
-./Game.py
+./antichess.py
 ```
 
 For other command-line options:
 ```shell
-./Game.py -h
+./antichess.py -h
 ```
 
 Moves are input by specifying the origin and destination squares, e.g.
@@ -44,4 +45,5 @@ You can also:
 
 ## TODO
 
-* en passant is not currently implemented.
+* En passant is not currently implemented.
+* Some bugs exist related to promotion moves.
