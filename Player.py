@@ -20,10 +20,21 @@ class Player:
 class HumanPlayer(Player):
 	name = "Human"
 	def getMove(self, board, maxTime):
+                promptText = "Enter move: "
+		moves, iscaptures = self.rules.getAllValidMoves(board, self.colour)
+                # Is there a single forced capture?
+                if len(moves)==1 and iscaptures[0]:
+                    forcedCapture = True
+                    promptText = "Enter move [ENTER for " + str(moves[0]) + "]: "
+                else:
+                    forcedCapture = False
 
 		metacommand = True
 		while metacommand:
-			m = raw_input("Enter move: ")
+			m = raw_input(promptText)
+                        # Single forced capture
+                        if m=="" and forcedCapture==True:
+                            return moves[0]
 			# Re-display board
 			if m=="b":
 				board.displayAsText()
@@ -33,7 +44,6 @@ class HumanPlayer(Player):
 				return Rules.Move.RETRACT
 			# Show list of valid moves
 			if m=="v":
-				moves, iscaptures = self.rules.getAllValidMoves(board, self.colour)
 				for i,move in enumerate(moves):
 					if iscaptures[i]:
 						print move.__str__() + " [CAPTURE]"
