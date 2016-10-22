@@ -54,24 +54,27 @@ class HumanPlayer(Player):
 				return Rules.Move.RESIGN
 			metacommand = False
 
-		# If we've got this far, input is a move
+		# If we've got this far, input should be a move
 
+                try:
+		        mm = [m[0:2], m[2:4]]   # e2e4
+		        fr = [0, 0]
+		        to = [0, 0]
+		        conv = dict(a=0, b=1, c=2, d=3, e=4, f=5, g=6, h=7)
+		        fr[1] = conv[ mm[0][0] ]
+		        fr[0] = 7 - (int(mm[0][1]) - 1)
+		        to[1] = conv[ mm[1][0] ]
+		        to[0] = 7 - (int(mm[1][1]) - 1)
 
-		mm = [m[0:2], m[2:4]]   # e2e4
-		fr = [0, 0]
-		to = [0, 0]
-		conv = dict(a=0, b=1, c=2, d=3, e=4, f=5, g=6, h=7)
-		fr[1] = conv[ mm[0][0] ]
-		fr[0] = 7 - (int(mm[0][1]) - 1)
-		to[1] = conv[ mm[1][0] ]
-		to[0] = 7 - (int(mm[1][1]) - 1)
-
-		# Promotion?
-		promotionDict = dict(Q=Pieces.Queen(self.colour), R=Pieces.Rook(self.colour), N=Pieces.Knight(self.colour), B=Pieces.Bishop(self.colour), K=Pieces.King(self.colour))
-		if len(m)>4:
-			return Move.PromotionMove( fr, to, promotionDict[m[4]] )
-		else:
-			return Move.Move(fr, to)
+		        # Promotion?
+		        promotionDict = dict(Q=Pieces.Queen(self.colour), R=Pieces.Rook(self.colour), N=Pieces.Knight(self.colour), B=Pieces.Bishop(self.colour), K=Pieces.King(self.colour))
+		        if len(m)>4:
+		        	return Move.PromotionMove( fr, to, promotionDict[m[4]] )
+		        else:
+		        	return Move.Move(fr, to)
+                except:
+                        print "Couldn't parse input."
+                        return Move.NONE
 
 class PassingPlayer(Player):
 	name = "Passing"

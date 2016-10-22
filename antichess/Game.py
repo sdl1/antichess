@@ -72,6 +72,9 @@ def playGame():
 			while not madeValidMove:
                                 print playerNames[col] + "'s turn"
 				m = players[col].getMove(b, maxTime)
+                                # NoneMove -> try again
+                                if m==Move.NONE:
+                                    continue
                                 # If retract, we pop two moves and try again
                                 if m==Move.RETRACT:
                                     lastMoveByThisPlayer = b.getSecondLastMove()
