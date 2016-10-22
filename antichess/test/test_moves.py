@@ -35,6 +35,33 @@ class MovesGenerationTest(unittest.TestCase):
         validMoves = ["h1h3"]
         self.assertValidMoves(self.board, validMoves, 0)
 
+    def testPrinting(self):
+        # Test move generation in non-trivial board
+        # The print statement catches some bugs due
+        # to out of bounds indices
+        self.board.clear()
+        self.board.setPiece("a1", Pieces.Rook(0));
+        self.board.setPiece("a2", Pieces.Pawn(0));
+        self.board.setPiece("g1", Pieces.Knight(0));
+        self.board.setPiece("h1", Pieces.Rook(0));
+        self.board.setPiece("e2", Pieces.Pawn(0));
+        self.board.setPiece("f2", Pieces.King(0));
+        self.board.setPiece("h3", Pieces.Pawn(0));
+
+        self.board.setPiece("a3", Pieces.Pawn(1));
+        self.board.setPiece("g6", Pieces.Pawn(1));
+        self.board.setPiece("a7", Pieces.Pawn(1));
+        self.board.setPiece("e7", Pieces.Pawn(1));
+        self.board.setPiece("f7", Pieces.Pawn(1));
+        self.board.setPiece("h7", Pieces.Pawn(1));
+        self.board.setPiece("d7", Pieces.King(1));
+        self.board.setPiece("h8", Pieces.Rook(1));
+        self.board.displayAsText()
+        v, _ = self.rules.getAllValidMoves(self.board, 0, enforceCaptures=True)
+        for move in v:
+            print move
+        self.assertTrue(len(v)>1)
+
     def testPromotionMoves(self):
         # Promotion moves
         self.board.clear()

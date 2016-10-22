@@ -23,10 +23,13 @@ class Suicide():
 			print "Retracting move"
 			return True
 
-		fr, to = move.unpack()
                 # Basic validation - check it's within the board
-                if fr<0 or fr>63 or to<0 or to>63:
-                        raise RulesViolation("Invalid from or to square.")
+                if move[0][0]<0 or move[0][0]>7 or move[0][1]<0 or move[0][1]>7:
+                        raise RulesViolation("Invalid from square.")
+                if move[1][0]<0 or move[1][0]>7 or move[1][1]<0 or move[1][1]>7:
+                        raise RulesViolation("Invalid to square.")
+
+		fr, to = move.unpack()
 
 		# Can't move an empty square or other colour piece
 		if board.pieces[fr] == None:
