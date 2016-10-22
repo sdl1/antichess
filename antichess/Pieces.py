@@ -41,10 +41,10 @@ class Piece:
 		self.altsymbol = alt
 	def displayAsText(self, squarecolour=0, alt=False):
 		if alt:
-			sys.stdout.write(bcolours.PIECECOLOURALT[self.colour] + bcolours.BGCOLOURALT[squarecolour] + self.altsymbol + bcolours.ENDC)
+			sys.stdout.write(bcolours.PIECECOLOURALT[self.colour] + bcolours.BGCOLOURALT[squarecolour] + self.altsymbol + " " + bcolours.ENDC)
 			#print bcolours.PIECECOLOUR[self.colour] + self.altsymbol + bcolours.ENDC,
 		else:
-                        sys.stdout.write(bcolours.PIECECOLOUR[self.colour] + bcolours.BGCOLOUR[squarecolour] + self.altsymbol +" " + bcolours.ENDC)
+                        sys.stdout.write(bcolours.PIECECOLOUR[self.colour] + bcolours.BGCOLOUR[squarecolour] + self.altsymbol + " " + bcolours.ENDC)
 
 
 #NOTE: canMakeMove ignores whether or not there are pieces in the way

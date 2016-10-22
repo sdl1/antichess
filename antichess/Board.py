@@ -66,10 +66,10 @@ class Board:
 				p = self.pieces[idx]
                                 squarecolour = (col + row)%2
 				if (row==lastMove[0][0] and col==lastMove[0][1]) or (row==lastMove[1][0] and col==lastMove[1][1]):
-					if p==None:
-						sys.stdout.write(Pieces.bcolours.PIECECOLOURALT[ self.getLastMovedPiece().colour  ] +  "." + Pieces.bcolours.ENDC)
+                                        if p==None:
+                                                sys.stdout.write(Pieces.bcolours.PIECECOLOURALT[ self.getLastMovedPiece().colour  ] + Pieces.bcolours.BGCOLOURALT[squarecolour] + ". " + Pieces.bcolours.ENDC)
 					else:
-						p.displayAsText(squarecolour=squarecolour, alt=True)
+					        p.displayAsText(squarecolour=squarecolour, alt=True)
 				else:
 					if p==None:
 						#sys.stdout.write(" ")
