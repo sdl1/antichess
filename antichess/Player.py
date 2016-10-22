@@ -54,24 +54,27 @@ class HumanPlayer(Player):
 				return Rules.Move.RESIGN
 			metacommand = False
 
-		# If we've got this far, input is a move
+		# If we've got this far, input should be a move
 
+                try:
+		        mm = [m[0:2], m[2:4]]   # e2e4
+		        fr = [0, 0]
+		        to = [0, 0]
+		        conv = dict(a=0, b=1, c=2, d=3, e=4, f=5, g=6, h=7)
+		        fr[1] = conv[ mm[0][0] ]
+		        fr[0] = 7 - (int(mm[0][1]) - 1)
+		        to[1] = conv[ mm[1][0] ]
+		        to[0] = 7 - (int(mm[1][1]) - 1)
 
-		mm = [m[0:2], m[2:4]]   # e2e4
-		fr = [0, 0]
-		to = [0, 0]
-		conv = dict(a=0, b=1, c=2, d=3, e=4, f=5, g=6, h=7)
-		fr[1] = conv[ mm[0][0] ]
-		fr[0] = 7 - (int(mm[0][1]) - 1)
-		to[1] = conv[ mm[1][0] ]
-		to[0] = 7 - (int(mm[1][1]) - 1)
-
-		# Promotion?
-		promotionDict = dict(Q=Pieces.Queen(self.colour), R=Pieces.Rook(self.colour), N=Pieces.Knight(self.colour), B=Pieces.Bishop(self.colour), K=Pieces.King(self.colour))
-		if len(m)>4:
-			return Move.PromotionMove( fr, to, promotionDict[m[4]] )
-		else:
-			return Move.Move(fr, to)
+		        # Promotion?
+		        promotionDict = dict(Q=Pieces.Queen(self.colour), R=Pieces.Rook(self.colour), N=Pieces.Knight(self.colour), B=Pieces.Bishop(self.colour), K=Pieces.King(self.colour))
+		        if len(m)>4:
+		        	return Move.PromotionMove( fr, to, promotionDict[m[4]] )
+		        else:
+		        	return Move.Move(fr, to)
+                except:
+                        print "Couldn't parse input."
+                        return Move.NONE
 
 class PassingPlayer(Player):
 	name = "Passing"
@@ -96,9 +99,10 @@ class AIPlayer(Player):
 	name = "AI"
 	maxDepth = 0
 	INFINITY = 999999
-	def __init__(self, col, maxDepth=1, rules=Rules.Suicide()):
+	def __init__(self, col, maxDepth=1, verbose=False, rules=Rules.Suicide()):
 		Player.__init__(self, col, rules)
 		self.maxDepth = maxDepth
+                self.verbose = verbose
 		random.seed()
         
         def getMove(self, board, maxTime):
@@ -117,13 +121,16 @@ class AIPlayer(Player):
 		overallBestScore, overallBestMove = -self.INFINITY, validMoves[0]
 
                 for depth in range(0,self.maxDepth):
-                    print "At depth ", depth
+                    if self.verbose: 
+                        print "At depth ", depth
+                    else:
+                        sys.stdout.write(".")
                     bestScore, bestMove = self.getMoveToDepth(board, maxTime, startTime, validMoves, depth)
                     # Less than or equals means deeper moves at same score will supersede
                     if bestScore>=overallBestScore:
                         overallBestMove = bestMove
                         overallBestScore = bestScore
-                        print "Changing best move to ", overallBestMove
+                        if self.verbose: print "Changing best move to ", overallBestMove
                     if time.time()-startTime > maxTime:
                         break
                 # TODO give more weight to deeper evaluations
@@ -136,10 +143,11 @@ class AIPlayer(Player):
 		counter=0
 
 		for move in validMoves:
-			print move.__str__()+" ",
-			done = counter/float(len(validMoves)) * 100
-			sys.stdout.write( "%d%% " % done )
-			sys.stdout.flush()
+                        if self.verbose:
+                                print move.__str__()+" ",
+			        done = counter/float(len(validMoves)) * 100
+			        sys.stdout.write( "%d%% " % done )
+			        sys.stdout.flush()
 			counter += 1
 			#fr = move[0]
 			#to = move[1]
@@ -151,15 +159,15 @@ class AIPlayer(Player):
                         # Check time - if overtime, ignore this move
                         elapsedTime = time.time() - startTime
                         if elapsedTime>maxTime:
-                            print "Ran out of time."
+                            if self.verbose: print "Ran out of time."
                             break
-			print "score=%d" % score
+                        if self.verbose: print "score=%d" % score
 			sys.stdout.flush()
 			if score > bestScore:
 				bestScore, bestMove = score, move
 			if bestScore==self.INFINITY:
 				break
-		print "Best score is",bestScore,"for move",bestMove
+                if self.verbose: print "Best score is",bestScore,"for move",bestMove
 
 		#fr = bestMove[0]
 		#to = bestMove[1]
