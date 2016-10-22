@@ -46,4 +46,3 @@ You can also:
 ## TODO
 
 * En passant is not currently implemented.
-* Some bugs exist related to promotion moves.

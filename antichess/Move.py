@@ -34,6 +34,8 @@ class PromotionMove(Move):
 	def __init__(self, fr, to, promoteTo):
 		Move.__init__(self, fr, to)
 		self.promoteTo = promoteTo
+	def __str__(self):
+		return Move.__str__(self) + self.promoteTo.symbol
 
 class PassMove(Move):
 	def __init__(self):

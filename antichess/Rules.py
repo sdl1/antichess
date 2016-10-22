@@ -38,8 +38,8 @@ class Suicide():
 		tol = [to/8, to%8]
 		if not isinstance(board.pieces[fr], Pieces.Knight) and not board.hasClearPath(frl, tol):
 			raise RulesViolation("No clear path between to and from squares")
+
 		# Check particular piece movement
-		#TODO
 		if not board.pieces[fr].canMakeMove(board, move):
 			raise RulesViolation("Piece can't move like that")
 
@@ -64,6 +64,30 @@ class Suicide():
 					moves.append( m )
 				except RulesViolation as e:
 					pass
+                # Promotion moves
+		promotionPieces = [Pieces.Queen(colour), Pieces.Rook(colour), Pieces.Knight(colour), Pieces.Bishop(colour), Pieces.King(colour)]
+                if isinstance(board.pieces[fr[0]*8+fr[1]], Pieces.Pawn):
+                        row = fr[0]
+                        if colour==0 and row==1:
+                                for col in [fr[1]-1, fr[1], fr[1]+1]:
+                                        to = [0, col]
+                                        for pp in promotionPieces:
+				                m = Move.PromotionMove(fr, to, pp)
+				                try:
+				                	self.validate( m, board, colour, enforceCaptures )
+				                	moves.append( m )
+				                except RulesViolation as e:
+				                	pass
+                        elif colour==1 and row==6:
+                                for col in [fr[1]-1, fr[1], fr[1]+1]:
+                                        to = [7, col]
+                                        for pp in promotionPieces:
+				                m = Move.PromotionMove(fr, to, pp)
+				                try:
+				                	self.validate( m, board, colour, enforceCaptures )
+				                	moves.append( m )
+				                except RulesViolation as e:
+				                	pass
 		return moves
 
 	def getAllValidMoves(self, board, colour, enforceCaptures=True):

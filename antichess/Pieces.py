@@ -52,8 +52,8 @@ class Pawn(Piece):
 		if self.colour==0:
 			# First check for captures:
 			if abs(to[1]-fr[1])==1 and to[0]==fr[0]-1:
-				# Promotion with capture
 				if fr[0]==1:
+				        # Promotion with capture
 					return board.hasPieceOn(to[0], to[1]) and board.getPieceOn(to).colour==1 and isinstance(move, Move.PromotionMove)
 				else:
 					return board.hasPieceOn(to[0], to[1]) and board.getPieceOn(to).colour==1
@@ -66,17 +66,20 @@ class Pawn(Piece):
 			# First move can be double
 			if fr[0]==6:
 				return (to[0]==5 or to[0]==4) 
-			# Promotion (no capture)
+			# Promotion (no capture, that was checked above)
 			if fr[0]==1:
 				return to[0]==fr[0]-1 and isinstance(move, Move.PromotionMove)
-			else:
-				# Standard
-				return to[0]==fr[0]-1
+			# Standard
+			return to[0]==fr[0]-1
 		# Black
 		else:
 			# First check for captures:
 			if abs(to[1]-fr[1])==1 and to[0]==fr[0]+1:
-				return board.hasPieceOn(to[0], to[1]) and board.getPieceOn(to).colour==0
+				if fr[0]==6:
+				        # Promotion with capture
+					return board.hasPieceOn(to[0], to[1]) and board.getPieceOn(to).colour==0 and isinstance(move, Move.PromotionMove)
+                                else:
+				        return board.hasPieceOn(to[0], to[1]) and board.getPieceOn(to).colour==0
 			# Can't move onto a piece
 			if board.hasPieceOn(to[0], to[1]):
 				return False
@@ -86,12 +89,12 @@ class Pawn(Piece):
 			# First move can be double
 			if fr[0]==1:
 				return (to[0]==2 or to[0]==3) 
-			else:
-				return to[0]==fr[0]+1
+			# Promotion (no capture, that was checked above)
+			if fr[0]==6:
+				return to[0]==fr[0]+1 and isinstance(move, Move.PromotionMove)
+			# Standard
+			return to[0]==fr[0]+1
 		return False
-		# Black
-		#else:
-		#return True
 
 
 class King(Piece):

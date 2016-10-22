@@ -52,7 +52,7 @@ class MovesGenerationTest(unittest.TestCase):
         self.assertValidMoves(self.board, validMoves, 0)
         validMoves = ["a2b1R", "a2b1N", "a2b1B", "a2b1Q", "a2b1K", \
                       "d8f7"]
-        self.assertValidMoves(self.board, validMoves, 1, enforceCaptures=False)
+        self.assertValidMoves(self.board, validMoves, 1)
 
 if __name__=="__main__":
     unittest.main()
