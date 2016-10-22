@@ -22,6 +22,8 @@ def playGame():
 	                  help="set black player", metavar="PLAYER")
 	parser.add_option("-t", "--time", type="int", dest="maxTime", default=5,
 	                  help="set maximum AI thinking time", metavar="MAXTIME")
+	parser.add_option("-v", "--verbose", action="store_true", dest="verbose", default=False,
+	                  help="set verbose AI")
 	(options, args) = parser.parse_args()
 
 	b = Board.Board()
@@ -35,7 +37,7 @@ def playGame():
 		if p=="human":
 			players.append( Player.HumanPlayer(i) )
 		elif p=="ai":
-			players.append( Player.AIPlayer(i, AIdepth) )
+			players.append( Player.AIPlayer(i, AIdepth, options.verbose) )
 		elif p=="random":
 			players.append( Player.RandomPlayer(i) )
 		elif p=="pass":

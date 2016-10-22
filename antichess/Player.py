@@ -96,9 +96,10 @@ class AIPlayer(Player):
 	name = "AI"
 	maxDepth = 0
 	INFINITY = 999999
-	def __init__(self, col, maxDepth=1, rules=Rules.Suicide()):
+	def __init__(self, col, maxDepth=1, verbose=False, rules=Rules.Suicide()):
 		Player.__init__(self, col, rules)
 		self.maxDepth = maxDepth
+                self.verbose = verbose
 		random.seed()
         
         def getMove(self, board, maxTime):
@@ -117,13 +118,16 @@ class AIPlayer(Player):
 		overallBestScore, overallBestMove = -self.INFINITY, validMoves[0]
 
                 for depth in range(0,self.maxDepth):
-                    print "At depth ", depth
+                    if self.verbose: 
+                        print "At depth ", depth
+                    else:
+                        sys.stdout.write(".")
                     bestScore, bestMove = self.getMoveToDepth(board, maxTime, startTime, validMoves, depth)
                     # Less than or equals means deeper moves at same score will supersede
                     if bestScore>=overallBestScore:
                         overallBestMove = bestMove
                         overallBestScore = bestScore
-                        print "Changing best move to ", overallBestMove
+                        if self.verbose: print "Changing best move to ", overallBestMove
                     if time.time()-startTime > maxTime:
                         break
                 # TODO give more weight to deeper evaluations
@@ -136,10 +140,11 @@ class AIPlayer(Player):
 		counter=0
 
 		for move in validMoves:
-			print move.__str__()+" ",
-			done = counter/float(len(validMoves)) * 100
-			sys.stdout.write( "%d%% " % done )
-			sys.stdout.flush()
+                        if self.verbose:
+                                print move.__str__()+" ",
+			        done = counter/float(len(validMoves)) * 100
+			        sys.stdout.write( "%d%% " % done )
+			        sys.stdout.flush()
 			counter += 1
 			#fr = move[0]
 			#to = move[1]
@@ -151,15 +156,15 @@ class AIPlayer(Player):
                         # Check time - if overtime, ignore this move
                         elapsedTime = time.time() - startTime
                         if elapsedTime>maxTime:
-                            print "Ran out of time."
+                            if self.verbose: print "Ran out of time."
                             break
-			print "score=%d" % score
+                        if self.verbose: print "score=%d" % score
 			sys.stdout.flush()
 			if score > bestScore:
 				bestScore, bestMove = score, move
 			if bestScore==self.INFINITY:
 				break
-		print "Best score is",bestScore,"for move",bestMove
+                if self.verbose: print "Best score is",bestScore,"for move",bestMove
 
 		#fr = bestMove[0]
 		#to = bestMove[1]
