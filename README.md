@@ -8,7 +8,7 @@ antichess is a simple terminal implementation of suicide chess - also called ant
 * Captures are obligatory. If one or more captures are available, the capturing player may choose.
 * There is no check, checkmate or castling. Kings are treated as a normal piece which may be captured.
 * A player that is stalemated wins.
-* There is no fity-move rule or threefold repetition rule.
+* There is no fifty-move rule or threefold repetition rule.
 
 The first player to lose all their pieces wins. If a player cannot move on their turn, they win.
 
