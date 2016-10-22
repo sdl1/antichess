@@ -36,6 +36,23 @@ class Board:
 		self.pieces.append(Pieces.Knight(self.WHITE))
 		self.pieces.append(Pieces.Rook(self.WHITE))
 
+        def clear(self):
+                """Remove all pieces and moves."""
+                for i in range(0,64):
+                    self.pieces[i] = None
+                self.movesMade = []
+
+        def stringToSquare(self, squareString):
+                # E.g. squareString = e2
+		conv = dict(a=0, b=1, c=2, d=3, e=4, f=5, g=6, h=7)
+		row = 7 - (int(squareString[1]) - 1)
+                col = conv[squareString[0]]
+		return row*8 + col
+
+        def setPiece(self, squareString, piece):
+                square = self.stringToSquare(squareString)
+                self.pieces[square] = piece
+
 	def displayAsText(self):
 		lastMove = self.getLastMove()
 		print "--a-b-c-d-e-f-g-h--"

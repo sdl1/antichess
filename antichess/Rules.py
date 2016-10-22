@@ -66,13 +66,13 @@ class Suicide():
 					pass
 		return moves
 
-	def getAllValidMoves(self, board, colour):
+	def getAllValidMoves(self, board, colour, enforceCaptures=True):
 		validMoves = []
 		isCapture = []
 		# All my pieces
 		pieces = board.getAllPieces(colour)
 		for p in pieces:
-			for m in self.getValidMoves(board, p, colour):
+			for m in self.getValidMoves(board, p, colour, enforceCaptures):
 				validMoves.append(m)
 				fr,to = m.unpack()
 				isCapture.append( not board.pieces[ to ] == None )
