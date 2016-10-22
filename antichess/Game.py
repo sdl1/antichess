@@ -24,6 +24,8 @@ def playGame():
 	                  help="set maximum AI thinking time", metavar="MAXTIME")
 	parser.add_option("-v", "--verbose", action="store_true", dest="verbose", default=False,
 	                  help="set verbose AI")
+	parser.add_option("--singleturn", action="store_true", dest="singleturn", default=False,
+	                  help="(debug) play a single turn only")
 	(options, args) = parser.parse_args()
 
 	b = Board.Board()
@@ -102,6 +104,8 @@ def playGame():
 			b.displayAsText()
 			print playerNames[col] + " moved", m
 			print ""
+                        if options.singleturn:
+                                exit()
 		if not WIN==-1:
 			print playerNames[WIN] + " wins!"
 			exit()
