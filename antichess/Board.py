@@ -55,29 +55,34 @@ class Board:
 
 	def displayAsText(self):
 		lastMove = self.getLastMove()
-		print "--a-b-c-d-e-f-g-h--"
+		#print "--a-b-c-d-e-f-g-h--"
+		print "  a b c d e f g h"
 		for row in range(8):
 			sys.stdout.write(str(9 - (row+1)))
-			sys.stdout.write("|")
+			#sys.stdout.write("|")
+			sys.stdout.write(" ")
 			for col in range(8):
 				idx = 8*row + col
 				p = self.pieces[idx]
+                                squarecolour = (col + row)%2
 				if (row==lastMove[0][0] and col==lastMove[0][1]) or (row==lastMove[1][0] and col==lastMove[1][1]):
 					if p==None:
 						sys.stdout.write(Pieces.bcolours.PIECECOLOURALT[ self.getLastMovedPiece().colour  ] +  "." + Pieces.bcolours.ENDC)
 					else:
-						p.displayAsText(alt=True)
+						p.displayAsText(squarecolour=squarecolour, alt=True)
 				else:
 					if p==None:
-						sys.stdout.write(" ")
+						#sys.stdout.write(" ")
+						sys.stdout.write(Pieces.bcolours.BGCOLOUR[squarecolour] + "  " + Pieces.bcolours.ENDC)
 					else:
-						p.displayAsText()
-				sys.stdout.write("|")
+						p.displayAsText(squarecolour=squarecolour)
+			#sys.stdout.write("|")
+			sys.stdout.write(" ")
 
 		#	print "-----------------"
 			print 9-(row+1)
 		#print "-----------------"
-		print "--a-b-c-d-e-f-g-h--"
+		print "  a b c d e f g h"
 
 	def makeMove(self, move):
 		# Allow null moves (passes)

@@ -11,19 +11,25 @@ class bcolours:
     BLACK = '\033[30m'
     RED = '\033[31m'
     GREEN = '\033[92m'
+    GREEN_BOLD = '\033[1;92m'
     YELLOW = '\033[33m'
     BLUE = '\033[94m'
+    BLUE_BOLD = '\033[1;94m'
     MAGENTA = '\033[35m'
     CYAN = '\033[36m'
+    CYAN_BOLD = '\033[1;36m'
     WHITE = '\033[37m'
+    WHITE_BOLD = '\033[1;37m'
 
+    BG_DARKGRAY = '\033[100m'
+    BG_DEFAULT = '\033[49m'
 
     ENDC = '\033[0m'
 
-    #PIECECOLOUR = [OKGREEN, OKBLUE]
-    #PIECECOLOURALT = [WARNING, FAIL]
     PIECECOLOUR = [GREEN, BLUE]
     PIECECOLOURALT = [WHITE, CYAN]
+    BGCOLOUR = [BG_DEFAULT, BG_DARKGRAY]
+    BGCOLOURALT = [BG_DEFAULT, BG_DARKGRAY]
 
 class Piece:
 	colour = None
@@ -33,12 +39,12 @@ class Piece:
 		self.colour = col
 		self.symbol = sym
 		self.altsymbol = alt
-	def displayAsText(self, alt=False):
+	def displayAsText(self, squarecolour=0, alt=False):
 		if alt:
-			print bcolours.PIECECOLOURALT[self.colour] + self.symbol + bcolours.ENDC,
+			sys.stdout.write(bcolours.PIECECOLOURALT[self.colour] + bcolours.BGCOLOURALT[squarecolour] + self.altsymbol + bcolours.ENDC)
 			#print bcolours.PIECECOLOUR[self.colour] + self.altsymbol + bcolours.ENDC,
 		else:
-			print bcolours.PIECECOLOUR[self.colour] + self.symbol + bcolours.ENDC,
+                        sys.stdout.write(bcolours.PIECECOLOUR[self.colour] + bcolours.BGCOLOUR[squarecolour] + self.altsymbol +" " + bcolours.ENDC)
 
 
 #NOTE: canMakeMove ignores whether or not there are pieces in the way
