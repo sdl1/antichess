@@ -19,12 +19,20 @@ class MovesGenerationTest(unittest.TestCase):
         print "Asserted: ", moves_str
         self.assertTrue(set(v_str)==set(moves_str))
 
-    def testBasicMoves(self):
+    def testPawnMoves(self):
         # TODO large scale move generation
         # Basic pawn move
         self.board.clear()
         self.board.setPiece("d2", Pieces.Pawn(0));
         validMoves = ["d2d3", "d2d4"];
+        self.assertValidMoves(self.board, validMoves, 0)
+        self.board.clear()
+        self.board.setPiece("a2", Pieces.Pawn(0));
+        self.board.setPiece("h3", Pieces.Rook(1));
+        validMoves = ["a2a3", "a2a4"];
+        self.assertValidMoves(self.board, validMoves, 0)
+        self.board.setPiece("h1", Pieces.Rook(0));
+        validMoves = ["h1h3"]
         self.assertValidMoves(self.board, validMoves, 0)
 
     def testPromotionMoves(self):

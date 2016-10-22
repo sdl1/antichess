@@ -147,7 +147,7 @@ class Rook(Piece):
                 for col in range(0,7):
                     moves.append([fr[0], col])
                 for row in range(0,7):
-                    moves.append([row, col])
+                    moves.append([row, fr[1]])
                 return moves
 	def canMakeMove(self,board, move):
 		fr, to = move[0], move[1]
@@ -208,6 +208,7 @@ class Bishop(Piece):
                     r = r-1
                     c = c+1
                     moves.append([r,c])
+                r,c = fr[0], fr[1]
                 while r<7 and c>=1:
                     r = r+1
                     c = c-1
