@@ -3,7 +3,7 @@ Terminal implementation of suicide chess / anti-chess, with a simple AI.
 
 ## Overview
 
-antichess is a simple terminal implementation of suicide chess - also called anti chess or losing chess - which is a very fun and deep variation of standard chess. The objective of the game is to lose all pieces. Rules are the same as for standard chess, except:
+antichess is a simple terminal implementation of suicide chess - also called antichess or losing chess - which is a very fun and deep variation of standard chess. The objective of the game is to lose all pieces. Rules are the same as for standard chess, except:
 
 * Captures are obligatory. If one or more captures are available, the capturing player may choose.
 * There is no check, checkmate or castling. Kings are treated as a normal piece which may be captured.
@@ -12,13 +12,11 @@ antichess is a simple terminal implementation of suicide chess - also called ant
 
 The first player to lose all their pieces wins. If a player cannot move on their turn, they win.
 
-A simple (alpha-beta) AI is implemented, but it is very slow for more than a couple of plies lookahead.
-
 ## Usage
 
-Start a new game as white against the AI:
+Start a new game as white against the AI, giving it 10 seconds per move thinking time (default is 5):
 ```shell
-./antichess.py
+./antichess.py -t 10
 ```
 
 For other command-line options:
@@ -40,8 +38,6 @@ You can also:
 * Undo (retract) with `u` or `r`
 * Print the board again with `b`
 * Resign with `q`
-
-
 
 ## TODO
 
