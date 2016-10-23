@@ -175,9 +175,19 @@ class AIPlayer(Player):
 		return bestScore, bestMove
 
 	def heuristic(self, board, colour, validMoves, isCapture):
-		# Prefer fewer pieces
 		n_me = board.getNumPieces(colour)
 		n_him = board.getNumPieces(1-colour)
+
+                # Win from material
+		if n_me==0:
+			return +self.INFINITY
+		if n_him==0:
+			return -self.INFINITY
+                # Win from no moves
+                if len(validMoves)==0:
+                    return +self.INFINITY
+
+		# Prefer fewer pieces
                 material_score = n_him - n_me
 
                 # Prefer either no captures or lots of capture choices
@@ -190,10 +200,6 @@ class AIPlayer(Player):
                 else:
                     freedom_score = 0
 
-		if n_me==0:
-			return +self.INFINITY
-		if n_him==0:
-			return -self.INFINITY
 		return material_score + freedom_score
 
 	def minimax(self, board, depth, colour):
