@@ -1,3 +1,4 @@
+import Pieces
 
 class MoveViolation(Exception):
 	def __init__(self, value):
@@ -14,6 +15,27 @@ class Move:
 	def __init__(self, fr, to):
 		self.fr = fr
 		self.to = to
+        @staticmethod
+        def fromNotation(m, colour):
+            try:
+	        mm = [m[0:2], m[2:4]]   # e.g. e2e4
+                fr = [0, 0]
+	        to = [0, 0]
+	        conv = dict(a=0, b=1, c=2, d=3, e=4, f=5, g=6, h=7)
+	        fr[1] = conv[ mm[0][0] ]
+	        fr[0] = 7 - (int(mm[0][1]) - 1)
+	        to[1] = conv[ mm[1][0] ]
+	        to[0] = 7 - (int(mm[1][1]) - 1)
+	        # Promotion?
+	        promotionDict = dict(Q=Pieces.Queen(colour), R=Pieces.Rook(colour), N=Pieces.Knight(colour), B=Pieces.Bishop(colour), K=Pieces.King(colour))
+	        if len(m)>4:
+	    	    return PromotionMove( fr, to, promotionDict[m[4]] )
+	        else:
+	    	    return Move(fr, to)
+            except Exception as e:
+                print e
+                raise
+
 	def __getitem__(self, k):
 		if k==0:
 			return self.fr
