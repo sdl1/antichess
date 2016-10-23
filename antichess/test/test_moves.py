@@ -21,7 +21,6 @@ class MovesGenerationTest(unittest.TestCase):
 
     def testPawnMoves(self):
         # TODO large scale move generation
-        # Basic pawn move
         self.board.clear()
         self.board.setPiece("d2", Pieces.Pawn(0));
         validMoves = ["d2d3", "d2d4"];
@@ -88,6 +87,17 @@ class MovesGenerationTest(unittest.TestCase):
         validMoves = ["a2b1R", "a2b1N", "a2b1B", "a2b1Q", "a2b1K", \
                       "d8f7"]
         self.assertValidMoves(self.board, validMoves, 1)
+
+    def testRookMoves(self):
+        self.board.clear()
+        self.board.setPiece("c2", Pieces.Rook(0))
+        validMoves = ["c2a2", "c2b2", "c2d2", "c2e2", "c2f2", "c2g2", "c2h2", \
+                "c2c1", "c2c3", "c2c4", "c2c5", "c2c6", "c2c7", "c2c8"]
+        self.assertValidMoves(self.board, validMoves, 0)
+        self.board.clear()
+        self.board.setPiece("c2", Pieces.Rook(1))
+        self.assertValidMoves(self.board, validMoves, 1)
+
 
 if __name__=="__main__":
     unittest.main()

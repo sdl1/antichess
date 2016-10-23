@@ -144,9 +144,9 @@ class Rook(Piece):
 		Piece.__init__(self, col, "R", u'\u2656')
         def getPlausibleMoves(self, fr):
                 moves = []
-                for col in range(0,7):
+                for col in range(0,8):
                     moves.append([fr[0], col])
-                for row in range(0,7):
+                for row in range(0,8):
                     moves.append([row, fr[1]])
                 return moves
 	def canMakeMove(self,board, move):
