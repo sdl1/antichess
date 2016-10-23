@@ -116,6 +116,17 @@ class MovesGenerationTest(unittest.TestCase):
         self.board.setPiece("f3", Pieces.Bishop(1))
         self.assertValidMoves(self.board, validMoves, 1)
 
+    def testKingMoves(self):
+        self.board.clear()
+        self.board.setPiece("a1", Pieces.King(0))
+        self.board.setPiece("e5", Pieces.King(0))
+        validMoves = ["a1a2", "a1b2", "a1b1", \
+                      "e5e4", "e5e6", "e5d5", "e5f5", "e5d4", "e5f6", "e5f4", "e5d6"]
+        self.assertValidMoves(self.board, validMoves, 0)
+        self.board.clear()
+        self.board.setPiece("a1", Pieces.King(1))
+        self.board.setPiece("e5", Pieces.King(1))
+        self.assertValidMoves(self.board, validMoves, 1)
 
 if __name__=="__main__":
     unittest.main()
