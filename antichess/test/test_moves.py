@@ -128,5 +128,19 @@ class MovesGenerationTest(unittest.TestCase):
         self.board.setPiece("e5", Pieces.King(1))
         self.assertValidMoves(self.board, validMoves, 1)
 
+    def testQueenMoves(self):
+        self.board.clear()
+        self.board.setPiece("f4", Pieces.Queen(0))
+        validMoves = ["f4a4", "f4b4", "f4c4", "f4d4", "f4e4", "f4g4", "f4h4", \
+        "f4f1", "f4f2", "f4f3", "f4f5", "f4f6", "f4f7", "f4f8", \
+        "f4g5", "f4h6", \
+        "f4e3", "f4d2", "f4c1", \
+        "f4g3", "f4h2", \
+        "f4e5", "f4d6", "f4c7", "f4b8"]
+        self.assertValidMoves(self.board, validMoves, 0)
+        self.board.clear()
+        self.board.setPiece("f4", Pieces.Queen(1))
+        self.assertValidMoves(self.board, validMoves, 1)
+
 if __name__=="__main__":
     unittest.main()
