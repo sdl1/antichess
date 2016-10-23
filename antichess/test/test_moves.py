@@ -3,12 +3,13 @@ from antichess.Board import Board
 from antichess import Pieces
 from antichess.Rules import Suicide
 
+# TODO large scale move generation
+
 class MovesGenerationTest(unittest.TestCase):
 
     def setUp(self):
         self.board = Board()
         self.rules = Suicide()
-
 
     def assertValidMoves(self, board, moves, colour, enforceCaptures=True):
         self.board.displayAsText()
@@ -20,7 +21,6 @@ class MovesGenerationTest(unittest.TestCase):
         self.assertTrue(set(v_str)==set(moves_str))
 
     def testPawnMoves(self):
-        # TODO large scale move generation
         self.board.clear()
         self.board.setPiece("d2", Pieces.Pawn(0));
         validMoves = ["d2d3", "d2d4"];
@@ -96,6 +96,24 @@ class MovesGenerationTest(unittest.TestCase):
         self.assertValidMoves(self.board, validMoves, 0)
         self.board.clear()
         self.board.setPiece("c2", Pieces.Rook(1))
+        self.assertValidMoves(self.board, validMoves, 1)
+
+    def testKnightMoves(self):
+        self.board.clear()
+        self.board.setPiece("d4", Pieces.Knight(0))
+        validMoves = ["d4c2", "d4e2", "d4b3", "d4b5", "d4c6", "d4e6", "d4f5", "d4f3"]
+        self.assertValidMoves(self.board, validMoves, 0)
+        self.board.clear()
+        self.board.setPiece("d4", Pieces.Knight(1))
+        self.assertValidMoves(self.board, validMoves, 1)
+
+    def testBishopMoves(self):
+        self.board.clear()
+        self.board.setPiece("f3", Pieces.Bishop(0))
+        validMoves = ["f3d1", "f3e2", "f3g4", "f3h5", "f3g2", "f3h1", "f3e4", "f3d5", "f3c6", "f3b7", "f3a8"]
+        self.assertValidMoves(self.board, validMoves, 0)
+        self.board.clear()
+        self.board.setPiece("f3", Pieces.Bishop(1))
         self.assertValidMoves(self.board, validMoves, 1)
 
 
