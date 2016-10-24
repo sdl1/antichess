@@ -1,5 +1,8 @@
 # antichess
+
 Terminal implementation of suicide chess / anti-chess, with a simple AI.
+
+![antichess](img/antichess.png)
 
 ## Overview
 
