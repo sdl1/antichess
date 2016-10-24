@@ -33,5 +33,23 @@ class EnPassantTest(unittest.TestCase):
         self.board.makeMove(Move.fromNotation("h3h4", 0))
         self.assertValidMoves(self.board, ["a5a6", "h4h5"], 0)
 
+    def testEnPassantUndo(self):
+        self.board.clear()
+        # Before en passant
+        self.board.setPiece("a5", Pieces.Pawn(0))
+        self.board.setPiece("b7", Pieces.Pawn(1))
+        self.board.setPiece("h3", Pieces.Pawn(0))
+        self.assertValidMoves(self.board, ["a5a6", "h3h4"], 0)
+        # En passant opportunity
+        self.board.makeMove(Move.fromNotation("b7b5", 1))
+        self.assertValidMoves(self.board, ["a5a6", "a5b6", "h3h4"], 0)
+        # Opportunity passed
+        self.board.makeMove(Move.fromNotation("h3h4", 0))
+        self.assertValidMoves(self.board, ["a5a6", "h4h5"], 0)
+        # Undo h3h4
+        self.board.retractMove()
+        # Opportunity re-appears
+        self.assertValidMoves(self.board, ["a5a6", "a5b6", "h3h4"], 0)
+
 if __name__=="__main__":
     unittest.main()
