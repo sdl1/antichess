@@ -64,6 +64,23 @@ class EnPassantTest(unittest.TestCase):
         self.board.retractMove()
         # Opportunity re-appears
         self.assertValidMoves(self.board, ["a5a6", "a5b6", "h3h4"], 0)
+        # Try lots of undos
+        self.board.makeMove(Move.fromNotation("h3h4", 0))
+        self.board.makeMove(Move.fromNotation("h4h5", 0))
+        self.board.makeMove(Move.fromNotation("b5b4", 1))
+        self.board.makeMove(Move.fromNotation("h5h6", 0))
+        self.board.makeMove(Move.fromNotation("b4b3", 1))
+        self.board.makeMove(Move.fromNotation("h7h8", 0))
+        self.board.retractMove()
+        self.board.retractMove()
+        self.board.retractMove()
+        self.board.retractMove()
+        self.board.retractMove()
+        # Not valid yet...
+        self.assertValidMoves(self.board, ["a5a6", "h4h5"], 0)
+        self.board.retractMove()
+        # Now valid en passant
+        self.assertValidMoves(self.board, ["a5a6", "a5b6", "h3h4"], 0)
 
 if __name__=="__main__":
     unittest.main()
