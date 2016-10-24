@@ -10,7 +10,8 @@ class Board:
 	movesMade = []
         doublePawnPush = []
         madeEnPassant = []
-	def __init__(self):
+	def __init__(self, textmode=False):
+                self.textmode = textmode
 		self.pieces.append(Pieces.Rook(self.BLACK))
 		self.pieces.append(Pieces.Knight(self.BLACK))
 		self.pieces.append(Pieces.Bishop(self.BLACK))
@@ -57,6 +58,12 @@ class Board:
                 square = self.stringToSquare(squareString)
                 self.pieces[square] = piece
 
+        def display(self):
+                if self.textmode:
+                        self.displayAsText()
+                else:
+                        self.displayAsUnicode()
+
 	def displayAsText(self):
 		lastMove = self.getLastMove()
 		print "--a-b-c-d-e-f-g-h--"
@@ -77,11 +84,33 @@ class Board:
 					else:
 						p.displayAsText()
 				sys.stdout.write("|")
-
-		#	print "-----------------"
 			print 9-(row+1)
-		#print "-----------------"
 		print "--a-b-c-d-e-f-g-h--"
+
+	def displayAsUnicode(self):
+		lastMove = self.getLastMove()
+		print "  a b c d e f g h"
+		for row in range(8):
+			sys.stdout.write(str(9 - (row+1)))
+			#sys.stdout.write("|")
+			sys.stdout.write(" ")
+			for col in range(8):
+				idx = 8*row + col
+				p = self.pieces[idx]
+                                squarecolour = (col + row)%2
+				if (row==lastMove[0][0] and col==lastMove[0][1]) or (row==lastMove[1][0] and col==lastMove[1][1]):
+                                        if p==None:
+                                                sys.stdout.write(Pieces.bcolours.PIECECOLOURALT[ self.getLastMovedPiece().colour  ] + Pieces.bcolours.BGCOLOURALT[squarecolour] + ". " + Pieces.bcolours.ENDC)
+					else:
+					        p.displayAsUnicode(squarecolour=squarecolour, alt=True)
+				else:
+					if p==None:
+						sys.stdout.write(Pieces.bcolours.BGCOLOUR[squarecolour] + "  " + Pieces.bcolours.ENDC)
+					else:
+						p.displayAsUnicode(squarecolour=squarecolour)
+			sys.stdout.write(" ")
+			print 9-(row+1)
+		print "  a b c d e f g h"
 
 	def makeMove(self, move):
 		# Allow null moves (passes)

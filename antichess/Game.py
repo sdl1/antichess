@@ -24,11 +24,13 @@ def playGame():
 	                  help="set maximum AI thinking time", metavar="MAXTIME")
 	parser.add_option("-v", "--verbose", action="store_true", dest="verbose", default=False,
 	                  help="set verbose AI")
+	parser.add_option("-s", "--simple", action="store_true", dest="textmode", default=False,
+	                  help="use simple board display")
 	parser.add_option("--singleturn", action="store_true", dest="singleturn", default=False,
 	                  help="(debug) play a single turn only")
 	(options, args) = parser.parse_args()
 
-	b = Board.Board()
+	b = Board.Board(textmode = options.textmode)
 	AIdepth = options.AIdepth
         maxTime = options.maxTime
 
@@ -56,7 +58,7 @@ def playGame():
 
 
 	r = Rules.Suicide()
-	b.displayAsText()
+	b.display()
 	print ""
 
 	WIN = -1
@@ -85,7 +87,7 @@ def playGame():
                                     else:
                                         print "Unable to retract."
 			            print ""
-                                    b.displayAsText()
+                                    b.display()
 			            print ""
                                     continue
 				try:
@@ -101,7 +103,7 @@ def playGame():
 				break
 			b.makeMove(m)
 			print ""
-			b.displayAsText()
+			b.display()
 			print playerNames[col] + " moved", m
 			print ""
                         if options.singleturn:
