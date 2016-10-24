@@ -58,6 +58,10 @@ class EnPassantTest(unittest.TestCase):
         # En passant opportunity
         self.board.makeMove(Move.fromNotation("b2b4", 0))
         self.assertValidMoves(self.board, ["a4a3", "a4b3", "h3h2"], 1)
+        # Check it registers as a capture opportunity
+        _, iscap = self.rules.getAllValidMoves(self.board, 1, enforceCaptures=True)
+        self.assertEqual(len(iscap), 3)
+        self.assertEqual(sum(iscap), 1)
         # Opportunity passed
         self.board.makeMove(Move.fromNotation("h3h2", 1))
         self.assertValidMoves(self.board, ["a4a3", "h3h2"], 1)
