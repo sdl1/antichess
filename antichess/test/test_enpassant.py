@@ -82,5 +82,21 @@ class EnPassantTest(unittest.TestCase):
         # Now valid en passant
         self.assertValidMoves(self.board, ["a5a6", "a5b6", "h3h4"], 0)
 
+    def testDoubleEnpassant(self):
+        self.board.clear()
+        self.board.setPiece("c4", Pieces.Pawn(1))
+        self.board.setPiece("e4", Pieces.Pawn(1))
+        self.board.setPiece("d2", Pieces.Pawn(0))
+        self.assertValidMoves(self.board, ["c4c3", "e4e3"], 1)
+        # Double en passant opportunity
+        self.board.makeMove(Move.fromNotation("d2d4", 0))
+        self.assertValidMoves(self.board, ["c4c3", "c4d3", "e4e3", "e4d3"], 1)
+        # Pass
+        self.board.makeMove(Move.fromNotation("c4c3", 1))
+        self.assertValidMoves(self.board, ["c3c2", "e4e3"], 1)
+        # Undo
+        board.retractMove()
+        self.assertValidMoves(self.board, ["c4c3", "c4d3", "e4e3", "e4d3"], 1)
+
 if __name__=="__main__":
     unittest.main()
