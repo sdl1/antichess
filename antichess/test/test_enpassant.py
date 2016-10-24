@@ -19,6 +19,21 @@ class EnPassantTest(unittest.TestCase):
         print "Asserted: ", moves_str
         self.assertTrue(set(v_str)==set(moves_str))
 
+    def testEnPassantCapture(self):
+        self.board.clear()
+        # Before en passant
+        self.board.setPiece("a5", Pieces.Pawn(0))
+        self.board.setPiece("b7", Pieces.Pawn(1))
+        self.board.makeMove(Move.fromNotation("b7b5", 1))
+        self.assertValidMoves(self.board, ["a5a6", "a5b6"], 0)
+        # Check black pawn on b5
+        self.assertTrue(isinstance(self.board.pieces[26], Pieces.Pawn))
+        self.board.makeMove(Move.fromNotation("a5b6", 0))
+        # Check pawn is gone
+        self.assertTrue(self.board.pieces[26]==None)
+        self.assertValidMoves(self.board, ["b6b7"], 0)
+        self.assertValidMoves(self.board, [], 1)
+
     def testEnPassantWhite(self):
         self.board.clear()
         # Before en passant
