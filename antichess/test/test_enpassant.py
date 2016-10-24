@@ -19,7 +19,7 @@ class EnPassantTest(unittest.TestCase):
         print "Asserted: ", moves_str
         self.assertTrue(set(v_str)==set(moves_str))
 
-    def testEnPassantBasic(self):
+    def testEnPassantWhite(self):
         self.board.clear()
         # Before en passant
         self.board.setPiece("a5", Pieces.Pawn(0))
@@ -33,7 +33,21 @@ class EnPassantTest(unittest.TestCase):
         self.board.makeMove(Move.fromNotation("h3h4", 0))
         self.assertValidMoves(self.board, ["a5a6", "h4h5"], 0)
 
-    def testEnPassantUndo(self):
+    def testEnPassantBlack(self):
+        self.board.clear()
+        # Before en passant
+        self.board.setPiece("a4", Pieces.Pawn(1))
+        self.board.setPiece("b2", Pieces.Pawn(0))
+        self.board.setPiece("h3", Pieces.Pawn(1))
+        self.assertValidMoves(self.board, ["a4a3", "h3h2"], 1)
+        # En passant opportunity
+        self.board.makeMove(Move.fromNotation("b2b4", 0))
+        self.assertValidMoves(self.board, ["a4a3", "a4b3", "h3h2"], 1)
+        # Opportunity passed
+        self.board.makeMove(Move.fromNotation("h3h2", 1))
+        self.assertValidMoves(self.board, ["a4a3", "h3h2"], 1)
+
+    def testEnPassantWhiteUndo(self):
         self.board.clear()
         # Before en passant
         self.board.setPiece("a5", Pieces.Pawn(0))
