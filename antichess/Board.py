@@ -8,6 +8,8 @@ class Board:
 	WHITE = 0
 	BLACK = 1
 	movesMade = []
+        doublePawnPush = []
+        madeEnPassant = []
 	def __init__(self):
 		self.pieces.append(Pieces.Rook(self.BLACK))
 		self.pieces.append(Pieces.Knight(self.BLACK))
@@ -41,6 +43,8 @@ class Board:
                 for i in range(0,64):
                     self.pieces[i] = None
                 self.movesMade = []
+                self.doublePawnPush = []
+                self.madeEnPassant = []
 
         def stringToSquare(self, squareString):
                 # E.g. squareString = e2
@@ -89,12 +93,23 @@ class Board:
                         exit()
 
 		fr, to = move.unpack()
-		self.movesMade.append( [move, self.pieces[to]] )
+
+                # Record double pawn pushes for en passant
+                if isinstance(self.pieces[fr], Pieces.Pawn) and abs(move.to[0]-move.fr[0])==2:
+                        self.doublePawnPush.append(True)
+                else:
+                        self.doublePawnPush.append(False)
+                # TODO record self.madeEnPassant
+                self.madeEnPassant.append(False)
 
 		self.pieces[ to ] = self.pieces[ fr ]
 		self.pieces[ fr ] = None
 		if isinstance(move, Move.PromotionMove):
 			self.pieces[ to ] = move.promoteTo
+
+                capturedPiece = self.pieces[to] # Can be None
+                #TODO en passant
+		self.movesMade.append( [move, capturedPiece] )
 
 	def retractMove(self):
 		if len(self.movesMade)==0:
@@ -102,9 +117,15 @@ class Board:
 		[move, piece] = self.movesMade.pop()
 		fr, to = move.unpack()
 		self.pieces[ fr ] = self.pieces[ to ]
-		self.pieces[ to ] = piece
+                # Put captured piece back in the correct place in case of en passant
+                if self.madeEnPassant[-1]:
+                        pass #TODO
+                else:
+		        self.pieces[ to ] = piece
 		if isinstance(move, Move.PromotionMove):
 			self.pieces[ fr ] = Pieces.Pawn( self.pieces[fr].colour )
+                self.doublePawnPush.pop()
+                self.madeEnPassant.pop()
 
         def retractTurn(self):
                 # Try to pop two moves, to get back to the same player

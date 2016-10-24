@@ -19,6 +19,14 @@ class EnPassantTest(unittest.TestCase):
         print "Asserted: ", moves_str
         self.assertTrue(set(v_str)==set(moves_str))
 
+    def testHasCaptures(self):
+        self.board.clear()
+        self.board.setPiece("a5", Pieces.Pawn(0))
+        self.board.setPiece("b7", Pieces.Pawn(1))
+        self.assertFalse(self.board.hasCaptures(0))
+        self.board.makeMove(Move.fromNotation("b7b5", 1))
+        self.assertTrue(self.board.hasCaptures(0))
+
     def testEnPassantCapture(self):
         self.board.clear()
         # Before en passant
@@ -27,12 +35,15 @@ class EnPassantTest(unittest.TestCase):
         self.board.makeMove(Move.fromNotation("b7b5", 1))
         self.assertValidMoves(self.board, ["a5a6", "a5b6"], 0)
         # Check black pawn on b5
-        self.assertTrue(isinstance(self.board.pieces[26], Pieces.Pawn))
+        self.assertTrue(isinstance(self.board.pieces[25], Pieces.Pawn))
         self.board.makeMove(Move.fromNotation("a5b6", 0))
         # Check pawn is gone
-        self.assertTrue(self.board.pieces[26]==None)
+        self.assertTrue(self.board.pieces[25]==None)
         self.assertValidMoves(self.board, ["b6b7"], 0)
         self.assertValidMoves(self.board, [], 1)
+        # Check undo
+        self.board.retract()
+        self.assertTrue(isinstance(self.board.pieces[25], Pieces.Pawn))
 
     def testEnPassantWhite(self):
         self.board.clear()
@@ -53,18 +64,34 @@ class EnPassantTest(unittest.TestCase):
         # Before en passant
         self.board.setPiece("a4", Pieces.Pawn(1))
         self.board.setPiece("b2", Pieces.Pawn(0))
-        self.board.setPiece("h3", Pieces.Pawn(1))
-        self.assertValidMoves(self.board, ["a4a3", "h3h2"], 1)
+        self.board.setPiece("h4", Pieces.Pawn(1))
+        self.assertValidMoves(self.board, ["a4a3", "h4h3"], 1)
         # En passant opportunity
         self.board.makeMove(Move.fromNotation("b2b4", 0))
-        self.assertValidMoves(self.board, ["a4a3", "a4b3", "h3h2"], 1)
+        self.assertValidMoves(self.board, ["a4a3", "a4b3", "h4h3"], 1)
+        # Opportunity passed
+        self.board.makeMove(Move.fromNotation("h4h3", 1))
+        self.assertValidMoves(self.board, ["a4a3", "h3h2"], 1)
+
+    def testEnPassantRegistersAsCapture(self):
+        self.board.clear()
+        # Before en passant
+        self.board.setPiece("a4", Pieces.Pawn(1))
+        self.board.setPiece("b2", Pieces.Pawn(0))
+        self.board.setPiece("h4", Pieces.Pawn(1))
+        self.assertValidMoves(self.board, ["a4a3", "h4h3"], 1)
+        # En passant opportunity
+        self.board.makeMove(Move.fromNotation("b2b4", 0))
+        self.assertValidMoves(self.board, ["a4a3", "a4b3", "h4h3"], 1)
         # Check it registers as a capture opportunity
         _, iscap = self.rules.getAllValidMoves(self.board, 1, enforceCaptures=True)
         self.assertEqual(len(iscap), 3)
         self.assertEqual(sum(iscap), 1)
         # Opportunity passed
-        self.board.makeMove(Move.fromNotation("h3h2", 1))
-        self.assertValidMoves(self.board, ["a4a3", "h3h2"], 1)
+        self.board.makeMove(Move.fromNotation("h4h3", 1))
+        _, iscap = self.rules.getAllValidMoves(self.board, 1, enforceCaptures=True)
+        self.assertEqual(len(iscap), 2)
+        self.assertEqual(sum(iscap), 0)
 
     def testEnPassantWhiteUndo(self):
         self.board.clear()
@@ -114,7 +141,7 @@ class EnPassantTest(unittest.TestCase):
         self.board.makeMove(Move.fromNotation("c4c3", 1))
         self.assertValidMoves(self.board, ["c3c2", "e4e3"], 1)
         # Undo
-        board.retractMove()
+        self.board.retractMove()
         self.assertValidMoves(self.board, ["c4c3", "c4d3", "e4e3", "e4d3"], 1)
 
 if __name__=="__main__":
