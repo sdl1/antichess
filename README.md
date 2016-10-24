@@ -1,12 +1,12 @@
 # antichess
 
-Terminal implementation of suicide chess / anti-chess, with a simple AI.
+Terminal implementation of suicide chess / anti-chess, with an AI.
 
-![antichess](img/antichess.png)
+<img src="img/antichess.png" alt="antichess" width="200"/>
 
 ## Overview
 
-antichess is a simple terminal implementation of suicide chess - also called antichess or losing chess - which is a very fun and deep variation of standard chess. The objective of the game is to lose all pieces. Rules are the same as for standard chess, except:
+antichess is a terminal implementation of suicide chess - also called antichess or losing chess - which is a very fun and deep variation of standard chess. The objective of the game is to lose all pieces. Rules are the same as for standard chess, except:
 
 * Captures are obligatory. If one or more captures are available, the capturing player may choose.
 * There is no check, checkmate or castling. Kings are treated as a normal piece which may be captured.
