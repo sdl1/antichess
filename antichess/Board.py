@@ -122,6 +122,7 @@ class Board:
                         exit()
 
 		fr, to = move.unpack()
+		self.movesMade.append( [move, self.pieces[to]] )
 
                 # Record double pawn pushes for en passant
                 if isinstance(self.pieces[fr], Pieces.Pawn) and abs(move.to[0]-move.fr[0])==2:
@@ -135,10 +136,6 @@ class Board:
 		self.pieces[ fr ] = None
 		if isinstance(move, Move.PromotionMove):
 			self.pieces[ to ] = move.promoteTo
-
-                capturedPiece = self.pieces[to] # Can be None
-                #TODO en passant
-		self.movesMade.append( [move, capturedPiece] )
 
 	def retractMove(self):
 		if len(self.movesMade)==0:
