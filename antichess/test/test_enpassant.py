@@ -94,6 +94,8 @@ class EnPassantTest(unittest.TestCase):
         _, iscap = self.rules.getAllValidMoves(self.board, 1, enforceCaptures=True)
         self.assertEqual(len(iscap), 3)
         self.assertEqual(sum(iscap), 1)
+        # Check we have captures
+        self.assertTrue(board.hasCaptures(1))
         # Opportunity passed
         self.board.makeMove(Move.fromNotation("h4h3", 1))
         _, iscap = self.rules.getAllValidMoves(self.board, 1, enforceCaptures=True)

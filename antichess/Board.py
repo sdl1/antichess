@@ -129,8 +129,7 @@ class Board:
                         self.doublePawnPush.append(True)
                 else:
                         self.doublePawnPush.append(False)
-                # TODO record self.madeEnPassant and remove the captured pawn
-                if isinstance(self.pieces[fr], Pieces.Pawn) and abs(move.to[1]-move.fr[1])==1:
+                if move.isEnpassant(self):
                         self.madeEnPassant.append(True)
                         # The captured pawn will be in same column, but one row behind
                         # We don't store it explicitly.
@@ -200,7 +199,7 @@ class Board:
 		return self.pieces[to]
 
 	def hasCaptures(self, colour):
-		#TODO
+		#TODO make work with en passant
 		# All my pieces
 		pieces = self.getAllPieces(colour)
 		for p in pieces:

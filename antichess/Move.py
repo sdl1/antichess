@@ -36,6 +36,11 @@ class Move:
                 print e
                 raise
 
+        def isEnpassant(self, board):
+                fr, to = self.unpack()
+                # En passant if a pawn moves diagonally, and there's no piece in target square
+                return isinstance(board.pieces[fr], Pieces.Pawn) and abs(self.to[1]-self.fr[1])==1 and board.pieces[to]==None
+
 	def __getitem__(self, k):
 		if k==0:
 			return self.fr
