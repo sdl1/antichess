@@ -199,15 +199,9 @@ class Board:
 		return self.pieces[to]
 
 	def hasCaptures(self, colour):
-		#TODO make work with en passant
-		# All my pieces
-		pieces = self.getAllPieces(colour)
-		for p in pieces:
-			for m in Rules.Suicide().getValidMoves(self, p, colour, False):
-				to = m[1]
-				if not self.pieces[ 8*to[0]+to[1] ]==None:
-					return True
-		return False
+		# Important that we don't enforce captures here, otherwise enter infinite loop
+                _, isCapture = Rules.Suicide().getAllValidMoves(self, colour, enforceCaptures=False)
+                return sum(isCapture)>0
 
 	def hasPieceOn(self, row, col):
 		return not (self.pieces[row*8+col] == None)
