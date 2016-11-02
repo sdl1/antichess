@@ -38,12 +38,19 @@ class EnPassantTest(unittest.TestCase):
         self.assertTrue(isinstance(self.board.pieces[25], Pieces.Pawn))
         self.board.makeMove(Move.fromNotation("a5b6", 0))
         # Check pawn is gone
+        self.board.displayAsText()
         self.assertTrue(self.board.pieces[25]==None)
         self.assertValidMoves(self.board, ["b6b7"], 0)
         self.assertValidMoves(self.board, [], 1)
         # Check undo
-        self.board.retract()
+        print map(str,self.board.movesMade[-1])
+        print self.board.getLastMovedPiece().colour
+        self.board.retractMove()
+        print map(str,self.board.movesMade[-1])
+        print self.board.getLastMovedPiece().colour
+        self.board.displayAsText()
         self.assertTrue(isinstance(self.board.pieces[25], Pieces.Pawn))
+        self.assertEquals(self.board.pieces[25].colour, 1)
 
     def testEnPassantWhite(self):
         self.board.clear()

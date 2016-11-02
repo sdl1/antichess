@@ -129,8 +129,23 @@ class Board:
                         self.doublePawnPush.append(True)
                 else:
                         self.doublePawnPush.append(False)
-                # TODO record self.madeEnPassant
-                self.madeEnPassant.append(False)
+                # TODO record self.madeEnPassant and remove the captured pawn
+                if isinstance(self.pieces[fr], Pieces.Pawn) and abs(move.to[1]-move.fr[1])==1:
+                        self.madeEnPassant.append(True)
+                        # The captured pawn will be in same column, but one row behind
+                        # We don't store it explicitly.
+                        # This is ok because if we want to retract the move, we know it's
+                        # an en passant and therefore which piece to replace and where.
+                        capturedPieceCol = move.to[1]
+                        # Offset is -1 for black, +1 for white
+                        if self.pieces[fr].colour==self.WHITE:
+                                offset = +1
+                        else:
+                                offset = -1
+                        capturedPieceRow = move.to[0] + offset
+                        self.pieces[ capturedPieceRow*8 + capturedPieceCol ] = None
+                else:
+                        self.madeEnPassant.append(False)
 
 		self.pieces[ to ] = self.pieces[ fr ]
 		self.pieces[ fr ] = None
@@ -145,7 +160,14 @@ class Board:
 		self.pieces[ fr ] = self.pieces[ to ]
                 # Put captured piece back in the correct place in case of en passant
                 if self.madeEnPassant[-1]:
-                        pass #TODO
+                        capturedPieceCol = move.to[1]
+                        # Offset is -1 for black, +1 for white
+                        if self.pieces[fr].colour==self.WHITE:
+                                offset = +1
+                        else:
+                                offset = -1
+                        capturedPieceRow = move.to[0] + offset
+                        self.pieces[ capturedPieceRow*8 + capturedPieceCol ] = Pieces.Pawn( 1-self.pieces[fr].colour )
                 else:
 		        self.pieces[ to ] = piece
 		if isinstance(move, Move.PromotionMove):
