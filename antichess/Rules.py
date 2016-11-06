@@ -52,7 +52,7 @@ class Suicide():
 
 		# Must make captures if possible
 		if enforceCaptures:
-			if board.hasCaptures(col) and board.pieces[to] == None:
+                    if board.hasCaptures(col) and (board.pieces[to] == None) and (not move.isEnpassant(board)):
 				raise RulesViolation("Captures are available")
 
 		return True
@@ -106,7 +106,8 @@ class Suicide():
 			for m in self.getValidMoves(board, p, colour, enforceCaptures):
 				validMoves.append(m)
 				fr,to = m.unpack()
-				isCapture.append( not board.pieces[ to ] == None )
+				capture = (not board.pieces[to] == None) or m.isEnpassant(board)
+				isCapture.append(capture)
 
 		return validMoves, isCapture
 

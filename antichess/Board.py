@@ -8,6 +8,8 @@ class Board:
 	WHITE = 0
 	BLACK = 1
 	movesMade = []
+        doublePawnPush = []
+        madeEnPassant = []
 	def __init__(self, textmode=False):
                 self.textmode = textmode
 		self.pieces.append(Pieces.Rook(self.BLACK))
@@ -42,6 +44,8 @@ class Board:
                 for i in range(0,64):
                     self.pieces[i] = None
                 self.movesMade = []
+                self.doublePawnPush = []
+                self.madeEnPassant = []
 
         def stringToSquare(self, squareString):
                 # E.g. squareString = e2
@@ -120,6 +124,28 @@ class Board:
 		fr, to = move.unpack()
 		self.movesMade.append( [move, self.pieces[to]] )
 
+                # Record double pawn pushes for en passant
+                if isinstance(self.pieces[fr], Pieces.Pawn) and abs(move.to[0]-move.fr[0])==2:
+                        self.doublePawnPush.append(True)
+                else:
+                        self.doublePawnPush.append(False)
+                if move.isEnpassant(self):
+                        self.madeEnPassant.append(True)
+                        # The captured pawn will be in same column, but one row behind
+                        # We don't store it explicitly.
+                        # This is ok because if we want to retract the move, we know it's
+                        # an en passant and therefore which piece to replace and where.
+                        capturedPieceCol = move.to[1]
+                        # Offset is -1 for black, +1 for white
+                        if self.pieces[fr].colour==self.WHITE:
+                                offset = +1
+                        else:
+                                offset = -1
+                        capturedPieceRow = move.to[0] + offset
+                        self.pieces[ capturedPieceRow*8 + capturedPieceCol ] = None
+                else:
+                        self.madeEnPassant.append(False)
+
 		self.pieces[ to ] = self.pieces[ fr ]
 		self.pieces[ fr ] = None
 		if isinstance(move, Move.PromotionMove):
@@ -131,9 +157,22 @@ class Board:
 		[move, piece] = self.movesMade.pop()
 		fr, to = move.unpack()
 		self.pieces[ fr ] = self.pieces[ to ]
-		self.pieces[ to ] = piece
+                # Put captured piece back in the correct place in case of en passant
+                if self.madeEnPassant[-1]:
+                        capturedPieceCol = move.to[1]
+                        # Offset is -1 for black, +1 for white
+                        if self.pieces[fr].colour==self.WHITE:
+                                offset = +1
+                        else:
+                                offset = -1
+                        capturedPieceRow = move.to[0] + offset
+                        self.pieces[ capturedPieceRow*8 + capturedPieceCol ] = Pieces.Pawn( 1-self.pieces[fr].colour )
+                else:
+		        self.pieces[ to ] = piece
 		if isinstance(move, Move.PromotionMove):
 			self.pieces[ fr ] = Pieces.Pawn( self.pieces[fr].colour )
+                self.doublePawnPush.pop()
+                self.madeEnPassant.pop()
 
         def retractTurn(self):
                 # Try to pop two moves, to get back to the same player
@@ -160,15 +199,9 @@ class Board:
 		return self.pieces[to]
 
 	def hasCaptures(self, colour):
-		#TODO
-		# All my pieces
-		pieces = self.getAllPieces(colour)
-		for p in pieces:
-			for m in Rules.Suicide().getValidMoves(self, p, colour, False):
-				to = m[1]
-				if not self.pieces[ 8*to[0]+to[1] ]==None:
-					return True
-		return False
+		# Important that we don't enforce captures here, otherwise enter infinite loop
+                _, isCapture = Rules.Suicide().getAllValidMoves(self, colour, enforceCaptures=False)
+                return sum(isCapture)>0
 
 	def hasPieceOn(self, row, col):
 		return not (self.pieces[row*8+col] == None)

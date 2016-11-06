@@ -72,6 +72,17 @@ class Pawn(Piece):
 		fr, to = move[0], move[1]
 		# White
 		if self.colour==0:
+                        # En passant check:
+                        if abs(to[1]-fr[1])==1 and to[0]==2 and fr[0]==3:
+                                # Last move was pawn push
+                                if len(board.doublePawnPush)>0 and board.doublePawnPush[-1]:
+		                        [move, _] = board.movesMade[-1]
+                                        _, lastMoveTo = move.unpack()
+                                        piece = board.pieces[lastMoveTo]
+                                        # Last moved piece was black pawn which started in correct place
+                                        # (already know it's double pawn push)
+                                        if isinstance(piece, Pawn) and piece.colour==1 and move.fr[0]==1 and move.fr[1]==to[1]:
+                                                return True
 			# First check for captures:
 			if abs(to[1]-fr[1])==1 and to[0]==fr[0]-1:
 				if fr[0]==1:
@@ -95,6 +106,17 @@ class Pawn(Piece):
 			return to[0]==fr[0]-1
 		# Black
 		else:
+                        # En passant check:
+                        if abs(to[1]-fr[1])==1 and to[0]==5 and fr[0]==4:
+                                # Last move was pawn push
+                                if len(board.doublePawnPush)>0 and board.doublePawnPush[-1]:
+		                        [move, _] = board.movesMade[-1]
+                                        _, lastMoveTo = move.unpack()
+                                        piece = board.pieces[lastMoveTo]
+                                        # Last moved piece was white pawn which started in correct place
+                                        # (already know it's double pawn push)
+                                        if isinstance(piece, Pawn) and piece.colour==0 and move.fr[0]==6 and move.fr[1]==to[1]:
+                                                return True
 			# First check for captures:
 			if abs(to[1]-fr[1])==1 and to[0]==fr[0]+1:
 				if fr[0]==6:
