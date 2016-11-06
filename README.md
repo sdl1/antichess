@@ -41,7 +41,3 @@ You can also:
 * Undo (retract) with `u` or `r`
 * Print the board again with `b`
 * Resign with `q`
-
-## TODO
-
-* En passant is not currently implemented.
