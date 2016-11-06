@@ -1,4 +1,5 @@
 # antichess
+[![Build Status](https://travis-ci.org/sdl1/antichess.svg?branch=master)](https://travis-ci.org/sdl1/antichess)
 
 Terminal implementation of suicide chess / anti-chess, with an AI.
 
