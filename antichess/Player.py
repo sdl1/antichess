@@ -37,7 +37,7 @@ class HumanPlayer(Player):
                             return moves[0]
 			# Re-display board
 			if m=="b":
-				board.displayAsText()
+				board.display()
 				continue
 			# Retract (undo) last move
 			if m=="u" or m=="r":
